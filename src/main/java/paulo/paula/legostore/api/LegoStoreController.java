@@ -1,5 +1,6 @@
 package paulo.paula.legostore.api;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import paulo.paula.legostore.model.LegoSet;
 import paulo.paula.legostore.model.LegoSetDifficulty;
@@ -24,7 +25,8 @@ public class LegoStoreController {
 
     @GetMapping("/all")
     public Collection<LegoSet> all() {
-        return this.legoSetRepository.findAll();
+        Sort sortByThemeAsc = Sort.by("theme").ascending();
+        return this.legoSetRepository.findAll(sortByThemeAsc);
     }
 
     @PutMapping
@@ -45,11 +47,23 @@ public class LegoStoreController {
 
     @GetMapping("/byTheme/{theme}")
     public Collection<LegoSet> byTheme(@PathVariable String theme) {
-        return this.legoSetRepository.findAllByThemeContains(theme);
+        Sort sortByThemeAsc = Sort.by("theme").ascending();
+        return this.legoSetRepository.findAllByThemeContains(theme, sortByThemeAsc);
     }
 
     @GetMapping("hardThatStartWithM")
     public Collection<LegoSet> hardThatStartWithM() {
         return this.legoSetRepository.findAllByDifficultyAndNameStartsWith(LegoSetDifficulty.HARD, "M");
+    }
+
+    @GetMapping("/byDeliveryFeeLessThan/{price}")
+    public Collection<LegoSet> byDeliveryFeeLessThan(@PathVariable int price) {
+        Sort sortByNameAsc = Sort.by("name").ascending();
+        return this.legoSetRepository.findAllByDeliveryPriceLessThan(price, sortByNameAsc);
+    }
+
+    @GetMapping("greatReviews")
+    public Collection<LegoSet> byGreatReviews() {
+        return this.legoSetRepository.findAllByGreatReviews();
     }
 }
