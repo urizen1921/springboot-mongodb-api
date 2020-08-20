@@ -15,16 +15,16 @@ import java.util.Collection;
 @Service
 public class DbSeeder implements CommandLineRunner {
 
-    private MongoTemplate mongoTemplate;
+    private LegoSetRepository legoSetRepository;
 
-    public DbSeeder(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
+    public DbSeeder(LegoSetRepository legoSetRepository) {
+        this.legoSetRepository = legoSetRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
 
-        this.mongoTemplate.dropCollection(LegoSet.class);
+        this.legoSetRepository.deleteAll();
 
         LegoSet milleniumFalcon = new LegoSet(
                 "Millenium Falcon",
@@ -63,6 +63,7 @@ public class DbSeeder implements CommandLineRunner {
         );
 
         Collection<LegoSet> initialProducts = Arrays.asList(milleniumFalcon, skyPolice, londonBridge);
-        this.mongoTemplate.insertAll(initialProducts);
+        this.legoSetRepository.insert(initialProducts);
+
     }
 }

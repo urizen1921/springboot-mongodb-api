@@ -1,8 +1,10 @@
 package paulo.paula.legostore.persistence;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 import paulo.paula.legostore.model.LegoSet;
 import paulo.paula.legostore.model.LegoSetDifficulty;
@@ -10,12 +12,13 @@ import paulo.paula.legostore.model.LegoSetDifficulty;
 import java.util.Collection;
 
 @Repository
-public interface LegoSetRepository extends MongoRepository<LegoSet, String> {
+public interface LegoSetRepository extends MongoRepository<LegoSet, String>, QuerydslPredicateExecutor<LegoSet> {
 
     //Methods created by method convention automatically executes a query
     Collection<LegoSet> findAllByThemeContains(String theme);
     Collection<LegoSet> findAllByThemeContains(String theme, Sort sort);
     Collection<LegoSet> findAllByDifficultyAndNameStartsWith(LegoSetDifficulty difficulty, String name);
+    Collection<LegoSet> findAllBy(TextCriteria textCriteria);
 
     //Query without method name convention
     //Because Delivery Price doesn't exist as a property
