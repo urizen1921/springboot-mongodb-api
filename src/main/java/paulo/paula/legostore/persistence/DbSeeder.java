@@ -2,10 +2,7 @@ package paulo.paula.legostore.persistence;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-import paulo.paula.legostore.model.DeliveryInfo;
-import paulo.paula.legostore.model.LegoSet;
-import paulo.paula.legostore.model.LegoSetDifficulty;
-import paulo.paula.legostore.model.ProductReview;
+import paulo.paula.legostore.model.*;
 import org.springframework.boot.CommandLineRunner;
 
 import java.time.LocalDate;
@@ -16,15 +13,24 @@ import java.util.Collection;
 public class DbSeeder implements CommandLineRunner {
 
     private LegoSetRepository legoSetRepository;
+    private MongoTemplate mongoTemplate;
 
-    public DbSeeder(LegoSetRepository legoSetRepository) {
+    public DbSeeder(LegoSetRepository legoSetRepository, MongoTemplate mongoTemplate) {
         this.legoSetRepository = legoSetRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
     public void run(String... args) throws Exception {
 
         this.legoSetRepository.deleteAll();
+
+        PaymentOptions creditCardPayment = new PaymentOptions(PaymentType.CREDIT_CARD, 0);
+        PaymentOptions payPalPayment = new PaymentOptions(PaymentType.PAYPAL, 0);
+        PaymentOptions cashPayment = new PaymentOptions(PaymentType.CASH, 0);
+        this.mongoTemplate.insert(creditCardPayment);
+        this.mongoTemplate.insert(payPalPayment);
+        this.mongoTemplate.insert(cashPayment);
 
         LegoSet milleniumFalcon = new LegoSet(
                 "Millenium Falcon",
@@ -35,7 +41,8 @@ public class DbSeeder implements CommandLineRunner {
                         new ProductReview("Dan", 7),
                         new ProductReview("Paulo", 10),
                         new ProductReview("Jovem", 5)
-                )
+                ),
+                creditCardPayment
         );
 
         LegoSet skyPolice = new LegoSet(
@@ -47,7 +54,8 @@ public class DbSeeder implements CommandLineRunner {
                         new ProductReview("Paulo", 3),
                         new ProductReview("Jovem", 7),
                         new ProductReview("Dan", 3)
-                )
+                ),
+                cashPayment
         );
 
         LegoSet londonBridge = new LegoSet(
@@ -59,7 +67,8 @@ public class DbSeeder implements CommandLineRunner {
                         new ProductReview("Paulo", 3),
                         new ProductReview("Jovem", 7),
                         new ProductReview("Dan", 3)
-                )
+                ),
+                payPalPayment
         );
 
         Collection<LegoSet> initialProducts = Arrays.asList(milleniumFalcon, skyPolice, londonBridge);
